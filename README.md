@@ -2,14 +2,14 @@
 
 <h1>🗄️ Database Systems Lab Project</h1>
 
-<p>A complete, multi-phase academic project covering the full lifecycle of relational database design and implementation, from conceptual modeling to full SQL deployment.</p>
+<p>A complete, multi-phase academic project covering the full lifecycle of relational database design and implementation, from conceptual modeling to a fully functional web-based application.</p>
 
 <p>
-  <img src="https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white" alt="MySQL"/>
+  <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" alt="JavaScript"/>
+  <img src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white" alt="HTML5"/>
+  <img src="https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white" alt="CSS3"/>
   <img src="https://img.shields.io/badge/SQL-F29111?style=for-the-badge&logo=databricks&logoColor=white" alt="SQL"/>
-  <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python"/>
   <img src="https://img.shields.io/badge/Status-Completed-brightgreen?style=for-the-badge" alt="Status"/>
-  <img src="https://img.shields.io/badge/Course-Database%20Systems%20Lab-blueviolet?style=for-the-badge" alt="Course"/>
 </p>
 
 </div>
@@ -39,7 +39,7 @@ The project covers:
 - Gathering and documenting system requirements
 - Designing an Entity-Relationship (ER) model
 - Converting the ER model into a normalized relational schema
-- Implementing the full database using SQL with real data and queries
+- Implementing the full database with a web-based frontend built using HTML, CSS, and JavaScript
 
 ---
 
@@ -50,7 +50,7 @@ Database-Systems-Lab-Project/
 │
 ├── Deliverable 1/        # Requirements analysis and ER diagram
 ├── Deliverable 2/        # Relational schema and normalization
-└── Deliverable 3/        # Full SQL implementation and final report
+└── Deliverable 3/        # Full implementation and final report
 ```
 
 ---
@@ -84,10 +84,11 @@ This phase translates the conceptual ER model into a concrete relational schema.
 
 ## 📦 Deliverable 3 -- Implementation and Final Report
 
-This phase covers the complete SQL implementation and advanced database features.
+This phase covers the complete implementation including the web frontend and database backend.
 
 **Includes:**
 
+- Web interface built with HTML, CSS, and JavaScript
 - DDL scripts: `CREATE TABLE` with primary keys, foreign keys, and constraints
 - DML scripts: data insertion and population with sample records
 - SQL queries: joins, subqueries, aggregations, grouping, and views
@@ -101,28 +102,28 @@ This phase covers the complete SQL implementation and advanced database features
 | Concept | Description |
 |---|---|
 | ER Modeling | Entities, attributes, relationships, and constraints |
-| Relational Mapping | Systematic conversion of ER diagrams to tables |
+| Relational Mapping | Systematic conversion of ER diagrams to relational tables |
 | Normalization | 1NF, 2NF, and 3NF to eliminate data anomalies |
 | DDL | Schema definition using `CREATE`, `ALTER`, `DROP` |
 | DML | Data management using `INSERT`, `UPDATE`, `DELETE` |
 | SQL Queries | Joins, subqueries, aggregate functions, and views |
 | Integrity Constraints | Primary keys, foreign keys, `UNIQUE`, `NOT NULL`, `CHECK` |
+| Web Integration | Connecting the database backend to an HTML/CSS/JS frontend |
 | Stored Procedures | Reusable SQL logic encapsulated in the database |
-| Triggers | Automatic actions in response to data events |
-| Query Optimization | Efficient query writing for better performance |
+| Triggers | Automatic actions fired in response to data events |
 
 ---
 
 ## 🛠️ Tech Stack
 
-| Tool / Technology | Role |
+| Technology | Usage |
 |---|---|
-| MySQL | Primary relational database management system |
+| HTML5 | Frontend structure and page layout |
+| CSS3 | Styling, responsiveness, and visual design |
+| JavaScript | Frontend logic and dynamic database interactions |
 | SQL (DDL + DML) | Schema creation, data manipulation, and querying |
-| MySQL Workbench | Visual schema design and SQL execution |
-| draw.io / Lucidchart | ER diagram creation and export |
-| Python + mysql-connector | Scripted database interaction (if applicable) |
-| VS Code | Script editing and project management |
+| MySQL / SQL Server | Relational database management system |
+| draw.io / Lucidchart | ER diagram design and export |
 
 ---
 
@@ -130,8 +131,9 @@ This phase covers the complete SQL implementation and advanced database features
 
 ### Prerequisites
 
-- MySQL Server 8.0 or above
-- MySQL Workbench or any compatible SQL client
+- A modern web browser (Chrome, Firefox, Edge)
+- MySQL Server 8.0 or above (or compatible DBMS)
+- A local server environment such as XAMPP or WAMP (if using PHP/JS backend)
 
 ### Setup Steps
 
@@ -142,30 +144,26 @@ git clone https://github.com/AbdulAzeemHashmi/Database-Systems-Lab-Project.git
 cd Database-Systems-Lab-Project
 ```
 
-**2. Create the database**
+**2. Set up the database**
+
+Open your SQL client and run:
 
 ```sql
 CREATE DATABASE db_lab_project;
 USE db_lab_project;
-```
-
-**3. Create the schema (from Deliverable 3)**
-
-```sql
 SOURCE 'Deliverable 3/schema.sql';
-```
-
-**4. Insert sample data**
-
-```sql
 SOURCE 'Deliverable 3/data.sql';
 ```
 
-**5. Run the queries**
+**3. Launch the frontend**
 
-```sql
-SOURCE 'Deliverable 3/queries.sql';
+Open the main HTML file in your browser:
+
+```bash
+open "Deliverable 3/index.html"
 ```
+
+Or place the project folder inside your local server's `htdocs` / `www` directory and access it via `http://localhost/Database-Systems-Lab-Project/`.
 
 > File names may differ. Check the contents of each deliverable folder for exact filenames.
 
@@ -173,13 +171,13 @@ SOURCE 'Deliverable 3/queries.sql';
 
 ## 👥 Contributors
 
-This project was developed as a collaborative team effort.
+This project was developed as a collaborative team effort for the **Database Systems Lab** course.
 
 | Name | GitHub Profile |
 |---|---|
 | Abdul Azeem | [@AbdulAzeemHashmi](https://github.com/AbdulAzeemHashmi) |
-| Diya Hurmat | |
-| M. Umair Ahmed ||
+| Diya Hurmat |  |
+| M. Umair Ahmed |  |
 
 ---
 
