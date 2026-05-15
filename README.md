@@ -163,8 +163,8 @@ This project was developed as a collaborative team effort for the **Database Sys
 | Name | GitHub |
 |---|---|
 | Abdul Azeem | [@AbdulAzeemHashmi](https://github.com/AbdulAzeemHashmi) |
-| Contributor 2 | Add GitHub link |
-| Contributor 3 | Add GitHub link |
+| Diya Hurmat | Add GitHub link |
+| M. Umair Ahmed | Add GitHub link |
 
 ---
 
