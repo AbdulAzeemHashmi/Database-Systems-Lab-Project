@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RideFlow | Admin Login</title>
+    <link rel="stylesheet" href="./css/style.css" />
+    <style>
+      #error-msg {
+        color: #ff6b6b;
+        font-size: 13px;
+        margin-bottom: 15px;
+        text-align: center;
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="master-container">
+      <header class="brand-header">
+        <h1 class="logo" style="margin-bottom: 5px">RideFlow</h1>
+        <p class="subtitle" id="portal-title" style="margin-bottom: 20px; color: var(--accent-color); font-weight: 500;">
+          Admin Portal
+        </p>
+      </header>
+
+      <section class="card">
+        <div id="error-msg"></div>
+
+        <form id="login-form">
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <div class="input-wrapper">
+              <input id="email" class="input" type="email" placeholder="admin@rideflow.com" required />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password</label>
+            <div class="input-wrapper">
+              <input id="password" class="input" type="password" placeholder="••••••••" required />
+            </div>
+          </div>
+
+          <!-- Hard-coded admin role — no register link shown -->
+          <input type="hidden" id="role" value="admin" />
+
+          <button type="submit" class="btn">
+            <span>Sign In</span>
+          </button>
+        </form>
+
+        <footer class="card-footer" style="margin-top: 10px">
+          <p>
+            <a href="role.html" style="color: var(--text-secondary)">← Change Portal</a>
+          </p>
+        </footer>
+      </section>
+    </main>
+
+    <script src="./js/authClient.js"></script>
+  </body>
+</html>

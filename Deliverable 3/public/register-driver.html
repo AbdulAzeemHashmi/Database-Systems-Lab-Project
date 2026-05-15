@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RideFlow | Driver Registration</title>
+    <link rel="stylesheet" href="./css/style.css" />
+    <style>
+      #error-msg {
+        color: #ff6b6b;
+        font-size: 13px;
+        margin-bottom: 15px;
+        text-align: center;
+        display: none;
+      }
+      .pending-notice {
+        background: rgba(245, 158, 11, 0.1);
+        border: 1px solid rgba(245, 158, 11, 0.3);
+        border-radius: 12px;
+        padding: 12px 16px;
+        margin-bottom: 20px;
+        font-size: 0.82rem;
+        color: #f59e0b;
+        line-height: 1.5;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="master-container" style="max-width: 560px">
+      <header class="brand-header">
+        <h1 class="logo">RideFlow</h1>
+        <p class="subtitle" style="margin-bottom: 10px">Driver Registration</p>
+      </header>
+
+      <section class="card">
+        <div id="error-msg"></div>
+
+        <div class="pending-notice">
+          ⚠️ After registering, your account and vehicle will be reviewed by an
+          admin before you can accept rides.
+        </div>
+
+        <form id="driver-register-form">
+          <!-- Personal Info -->
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="full_name">Full Name</label>
+              <div class="input-wrapper">
+                <input
+                  id="full_name"
+                  class="input"
+                  type="text"
+                  placeholder="John Doe"
+                  required
+                />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="email">Email Address</label>
+              <div class="input-wrapper">
+                <input
+                  id="email"
+                  class="input"
+                  type="email"
+                  placeholder="john@example.com"
+                  required
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="phone_number">Phone Number</label>
+              <div class="input-wrapper">
+                <input
+                  id="phone_number"
+                  class="input"
+                  type="tel"
+                  placeholder="0335-2227244"
+                  required
+                />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="password">Password</label>
+              <div class="input-wrapper">
+                <input
+                  id="password"
+                  class="input"
+                  type="password"
+                  placeholder="••••••••"
+                  required
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Driver Documents -->
+          <div style="margin: 1.5rem 0 1rem">
+            <h3
+              style="
+                font-size: 0.9rem;
+                color: var(--accent-color);
+                text-transform: uppercase;
+                letter-spacing: 1px;
+              "
+            >
+              Driver Documents
+            </h3>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="licence_no">Licence Number</label>
+              <div class="input-wrapper">
+                <input
+                  id="licence_no"
+                  class="input"
+                  type="text"
+                  placeholder="ABC-12345"
+                  required
+                />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="cnic">CNIC / National ID</label>
+              <div class="input-wrapper">
+                <input
+                  id="cnic"
+                  class="input"
+                  type="text"
+                  placeholder="00000-0000000-0"
+                  required
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Vehicle Details -->
+          <div style="margin: 1.5rem 0 1rem">
+            <h3
+              style="
+                font-size: 0.9rem;
+                color: var(--accent-color);
+                text-transform: uppercase;
+                letter-spacing: 1px;
+              "
+            >
+              Vehicle Details
+            </h3>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="vehicle_make">Make</label>
+              <div class="input-wrapper">
+                <input
+                  id="vehicle_make"
+                  class="input"
+                  type="text"
+                  placeholder="e.g. Toyota"
+                  required
+                />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="vehicle_model">Model</label>
+              <div class="input-wrapper">
+                <input
+                  id="vehicle_model"
+                  class="input"
+                  type="text"
+                  placeholder="e.g. Corolla"
+                  required
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="vehicle_year">Year</label>
+              <div class="input-wrapper">
+                <input
+                  id="vehicle_year"
+                  class="input"
+                  type="number"
+                  placeholder="2023"
+                  min="1990"
+                  max="2026"
+                  required
+                />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="license_plate">License Plate</label>
+              <div class="input-wrapper">
+                <input
+                  id="license_plate"
+                  class="input"
+                  type="text"
+                  placeholder="ABC-1234"
+                  required
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Vehicle Type — values MUST match DB enum: economy | premium | bike -->
+          <div class="form-group" style="margin-top: 0.9rem">
+            <label for="vehicle_type">Vehicle Category</label>
+            <div class="input-wrapper">
+              <select
+                id="vehicle_type"
+                class="input"
+                required
+                style="
+                  background: var(--bg-card);
+                  color: white;
+                  border: 1px solid var(--border-color);
+                "
+              >
+                <option value="economy">Economy (Suzuki, Alto, etc.)</option>
+                <option value="premium">
+                  Premium / Comfort (Corolla, Civic, etc.)
+                </option>
+                <option value="bike">Bike / Motorcycle</option>
+              </select>
+            </div>
+          </div>
+
+          <button type="submit" class="btn" style="margin-top: 1.5rem">
+            <span>Register as Driver</span>
+          </button>
+        </form>
+
+        <footer class="card-footer" style="margin-top: 16px">
+          <p>
+            Already have an account?
+            <a href="login.html?role=driver">Sign In</a>
+          </p>
+        </footer>
+        <footer class="card-footer" style="margin-top: 10px">
+          <p>
+            <a href="role.html" style="color: var(--text-secondary)"
+              >← Change Portal</a
+            >
+          </p>
+        </footer>
+      </section>
+    </main>
+
+    <script src="./js/authClient.js"></script>
+  </body>
+</html>

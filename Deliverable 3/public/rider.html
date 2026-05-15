@@ -1,0 +1,801 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RideFlow | Rider Portal</title>
+    <link rel="stylesheet" href="./css/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+        height: 100vh;
+        background: #0a0a0a;
+      }
+
+      #map {
+        width: 100%;
+        height: 100vh;
+        z-index: 1;
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+
+      .floating-panel {
+        position: absolute;
+        bottom: 30px;
+        left: 30px;
+        width: 400px;
+        z-index: 1000;
+        background: rgba(10, 10, 10, 0.88);
+        backdrop-filter: blur(18px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 20px;
+        padding: 24px;
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.8);
+      }
+
+      .panel-view {
+        display: none;
+        flex-direction: column;
+        gap: 15px;
+        animation: fadeIn 0.4s ease forwards;
+      }
+      .panel-view.active {
+        display: flex;
+      }
+
+      .suggestion-item {
+        padding: 10px 14px;
+        cursor: pointer;
+        font-size: 0.88rem;
+        color: rgba(255, 255, 255, 0.85);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        line-height: 1.4;
+      }
+      .suggestion-item:last-child {
+        border-bottom: none;
+      }
+      .suggestion-item:hover {
+        background: rgba(215, 209, 176, 0.1);
+        color: #d7d1b0;
+      }
+      .suggestion-item .place-name {
+        font-weight: 600;
+        display: block;
+      }
+      .suggestion-item .place-address {
+        font-size: 0.78rem;
+        color: rgba(255, 255, 255, 0.4);
+        display: block;
+        margin-top: 2px;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .user-menu {
+        position: absolute;
+        top: 20px;
+        right: 30px;
+        z-index: 1000;
+        background: rgba(10, 10, 10, 0.8);
+        backdrop-filter: blur(10px);
+        padding: 10px 20px;
+        border-radius: 30px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+        color: white;
+        text-decoration: none;
+        font-weight: 500;
+        transition: 0.3s;
+      }
+      .user-menu:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: #d7d1b0;
+      }
+      .history-btn {
+        right: 180px;
+      }
+
+      .input-wrapper input,
+      .input-wrapper select {
+        width: 100%;
+        padding: 14px 16px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        color: white;
+        font-size: 0.95rem;
+        outline: none;
+        transition: 0.3s;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+      }
+      .input-wrapper input:focus {
+        border-color: #d7d1b0;
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      .btn {
+        padding: 14px;
+        border-radius: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.3s;
+        border: none;
+        width: 100%;
+        text-align: center;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 0.95rem;
+      }
+      .btn-primary {
+        background: #d7d1b0;
+        color: #000;
+      }
+      .btn-primary:hover {
+        background: #c4be9e;
+      }
+      .btn-outline {
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+      }
+      .btn-outline:hover {
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      /* WALLET WIDGET */
+      .wallet-widget {
+        position: absolute;
+        bottom: 30px;
+        right: 30px;
+        z-index: 1000;
+        background: rgba(10, 10, 10, 0.88);
+        backdrop-filter: blur(18px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 20px;
+        padding: 20px 24px;
+        min-width: 200px;
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.8);
+      }
+      .wallet-label {
+        color: #888;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        margin-bottom: 6px;
+      }
+      .wallet-balance {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: white;
+        line-height: 1;
+        margin-bottom: 12px;
+      }
+      .wallet-topup-btn {
+        width: 100%;
+        padding: 10px;
+        background: rgba(215, 209, 176, 0.1);
+        color: #d7d1b0;
+        border: 1px solid rgba(215, 209, 176, 0.25);
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: 0.3s;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+      }
+      .wallet-topup-btn:hover {
+        background: rgba(215, 209, 176, 0.2);
+      }
+
+      /* MODAL OVERLAY */
+      .modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 9000;
+        background: rgba(0, 0, 0, 0.75);
+        backdrop-filter: blur(6px);
+        align-items: center;
+        justify-content: center;
+      }
+      .modal-overlay.active {
+        display: flex;
+      }
+
+      .modal-card {
+        background: #0f0f0f;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 24px;
+        padding: 2.5rem;
+        width: 420px;
+        max-width: 92vw;
+        color: white;
+        animation: fadeIn 0.3s ease;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+      }
+      .modal-card.wide {
+        max-width: 860px;
+        width: 92vw;
+      }
+
+      .modal-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+      }
+      .modal-subtitle {
+        color: #888;
+        font-size: 0.9rem;
+        margin-bottom: 1.5rem;
+      }
+
+      /* STAR RATING */
+      .star-rating {
+        display: flex;
+        gap: 8px;
+        font-size: 2.5rem;
+        margin: 1.2rem 0;
+        cursor: pointer;
+      }
+      .star-rating span {
+        color: rgba(255, 255, 255, 0.15);
+        transition: 0.2s;
+      }
+      .star-rating span.active {
+        color: #f59e0b;
+      }
+
+      /* TEXTAREA */
+      .rating-textarea {
+        width: 100%;
+        padding: 14px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        color: white;
+        font-size: 0.9rem;
+        resize: vertical;
+        min-height: 80px;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        margin-bottom: 1.2rem;
+        outline: none;
+      }
+      .rating-textarea:focus {
+        border-color: #d7d1b0;
+      }
+
+      /* HISTORY TABLE */
+      .history-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .history-table th {
+        padding: 12px 14px;
+        color: #666;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        text-align: left;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      }
+      .history-table td {
+        padding: 14px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        font-size: 0.88rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+
+    <!-- TOP NAV -->
+    <a
+      href="#"
+      class="user-menu history-btn"
+      onclick="
+        showHistory()
+        return false
+      "
+    >
+      <i data-lucide="clock" style="width: 16px"></i> History
+    </a>
+    <a href="login.html?role=rider" class="user-menu">
+      <i data-lucide="log-out" style="width: 16px"></i> Log Out
+    </a>
+
+    <!-- FLOATING BOOKING PANEL -->
+    <div class="floating-panel">
+      <!-- VIEW: Booking -->
+      <div id="view-booking" class="panel-view active">
+        <h2
+          style="
+            font-family: 'Anta', sans-serif;
+            margin-bottom: 5px;
+            color: white;
+            font-size: 1.5rem;
+          "
+        >
+          Where to?
+        </h2>
+
+        <div class="input-wrapper">
+          <div style="position: relative">
+            <input
+              type="text"
+              id="pickup-input"
+              placeholder="Search pickup location..."
+              autocomplete="off"
+            />
+            <div
+              id="pickup-suggestions"
+              style="
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                z-index: 2000;
+                background: rgba(15, 15, 15, 0.97);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 10px;
+                margin-top: 4px;
+                max-height: 200px;
+                overflow-y: auto;
+                display: none;
+              "
+            ></div>
+          </div>
+        </div>
+
+        <div class="input-wrapper">
+          <div style="position: relative">
+            <input
+              type="text"
+              id="dropoff-input"
+              placeholder="Search dropoff destination..."
+              autocomplete="off"
+            />
+            <div
+              id="dropoff-suggestions"
+              style="
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                z-index: 2000;
+                background: rgba(15, 15, 15, 0.97);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 10px;
+                margin-top: 4px;
+                max-height: 200px;
+                overflow-y: auto;
+                display: none;
+              "
+            ></div>
+          </div>
+        </div>
+
+        <div
+          id="ride-estimate"
+          style="
+            text-align: center;
+            font-size: 0.9rem;
+            color: #d7d1b0;
+            min-height: 20px;
+          "
+        ></div>
+
+        <!-- Optional Schedule -->
+        <div
+          id="schedule-container"
+          style="display: none; flex-direction: column; gap: 5px"
+        >
+          <label style="font-size: 0.75rem; color: #888"
+            >Schedule for later:</label
+          >
+          <input
+            type="datetime-local"
+            id="scheduled-at"
+            class="input-wrapper"
+            style="
+              width: 100%;
+              padding: 10px;
+              border-radius: 10px;
+              background: rgba(255, 255, 255, 0.05);
+              border: 1px solid rgba(255, 255, 255, 0.1);
+              color: white;
+              font-size: 0.85rem;
+            "
+          />
+        </div>
+
+        <div style="display: flex; gap: 10px">
+          <button class="btn btn-primary" id="find-ride-btn" style="flex: 2">
+            Request Now
+          </button>
+          <button
+            class="btn btn-outline"
+            id="schedule-btn"
+            style="flex: 1; padding: 14px 5px; font-size: 0.85rem"
+            onclick="toggleSchedule()"
+          >
+            <i
+              data-lucide="calendar"
+              style="width: 16px; vertical-align: middle"
+            ></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- VIEW: Transit (waiting/matched) -->
+      <div id="view-transit" class="panel-view">
+        <h3
+          id="transit-status"
+          style="color: #d7d1b0; text-align: center; font-size: 1.1rem"
+        >
+          Looking for a driver...
+        </h3>
+        <div
+          style="
+            background: rgba(255, 255, 255, 0.03);
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            text-align: center;
+          "
+          id="driver-details"
+        >
+          <i
+            data-lucide="loader"
+            style="
+              animation: spin 2s linear infinite;
+              color: #d7d1b0;
+              width: 32px;
+              height: 32px;
+            "
+          ></i>
+        </div>
+        <button class="btn btn-outline" onclick="cancelRide()">
+          Cancel Request
+        </button>
+      </div>
+
+      <!-- VIEW: Payment -->
+      <div id="view-payment" class="panel-view">
+        <h3 style="text-align: center; color: white; font-size: 1.1rem">
+          Trip Completed 🎉
+        </h3>
+        <div
+          style="
+            background: rgba(255, 255, 255, 0.03);
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+          "
+        >
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              font-size: 0.9rem;
+              color: #a1a1a1;
+            "
+          >
+            <span>Distance</span><span id="receipt-distance">—</span>
+          </div>
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              font-size: 1.2rem;
+              font-weight: 600;
+              color: white;
+              padding-top: 10px;
+              border-top: 1px solid rgba(255, 255, 255, 0.1);
+            "
+          >
+            <span>Total Fare</span>
+            <span id="fare-amount" style="color: #d7d1b0">Rs. 0</span>
+          </div>
+
+          <!-- Promo Code -->
+          <div style="display: flex; gap: 10px">
+            <input
+              type="text"
+              id="promo-input"
+              placeholder="Promo Code (optional)"
+              style="
+                flex: 1;
+                padding: 10px;
+                border-radius: 8px;
+                background: rgba(0, 0, 0, 0.5);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                color: white;
+                font-family: 'Plus Jakarta Sans', sans-serif;
+                font-size: 0.85rem;
+                outline: none;
+              "
+            />
+            <button
+              onclick="applyPromo()"
+              class="btn btn-outline"
+              style="width: auto; padding: 10px 15px; font-size: 0.82rem"
+            >
+              Apply
+            </button>
+          </div>
+          <div
+            id="promo-msg"
+            style="font-size: 0.8rem; text-align: center; min-height: 16px"
+          ></div>
+        </div>
+
+        <!-- Payment Method -->
+        <div class="input-wrapper">
+          <select id="payment-method">
+            <option value="cash">Pay via Cash</option>
+            <option value="wallet">Pay via Wallet</option>
+            <option value="credit card">Credit/Debit Card</option>
+          </select>
+        </div>
+
+        <!-- Wallet balance hint -->
+        <div
+          id="wallet-hint"
+          style="
+            font-size: 0.78rem;
+            color: #888;
+            text-align: center;
+            margin-top: -8px;
+          "
+        ></div>
+
+        <button class="btn btn-primary" id="pay-btn">Confirm Payment</button>
+      </div>
+    </div>
+
+    <!-- WALLET WIDGET (bottom-right) -->
+    <div class="wallet-widget">
+      <div class="wallet-label">My Wallet</div>
+      <div id="rider-balance" class="wallet-balance">Rs. 0</div>
+      <button class="wallet-topup-btn" onclick="showTopUp()">+ Top Up</button>
+    </div>
+
+    <!-- ===== MODALS ===== -->
+
+    <!-- TOP UP MODAL -->
+    <div id="topup-modal" class="modal-overlay">
+      <div class="modal-card">
+        <div class="modal-title">Add Funds</div>
+        <div class="modal-subtitle">Enter the amount to add to your wallet</div>
+
+        <div
+          style="display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap"
+        >
+          <button
+            class="btn btn-outline"
+            style="flex: 1; padding: 10px; font-size: 0.9rem"
+            onclick="setTopUpAmount(200)"
+          >
+            Rs. 200
+          </button>
+          <button
+            class="btn btn-outline"
+            style="flex: 1; padding: 10px; font-size: 0.9rem"
+            onclick="setTopUpAmount(500)"
+          >
+            Rs. 500
+          </button>
+          <button
+            class="btn btn-outline"
+            style="flex: 1; padding: 10px; font-size: 0.9rem"
+            onclick="setTopUpAmount(1000)"
+          >
+            Rs. 1000
+          </button>
+          <button
+            class="btn btn-outline"
+            style="flex: 1; padding: 10px; font-size: 0.9rem"
+            onclick="setTopUpAmount(2000)"
+          >
+            Rs. 2000
+          </button>
+        </div>
+
+        <input
+          type="number"
+          id="topup-amount"
+          placeholder="Or enter custom amount..."
+          style="
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1.1rem;
+            text-align: center;
+            margin-bottom: 20px;
+            outline: none;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+          "
+        />
+
+        <div
+          id="topup-msg"
+          style="
+            font-size: 0.82rem;
+            text-align: center;
+            margin-bottom: 12px;
+            min-height: 18px;
+          "
+        ></div>
+
+        <div style="display: flex; gap: 12px">
+          <button class="btn btn-primary" id="confirm-topup-btn">
+            Add Funds
+          </button>
+          <button class="btn btn-outline" onclick="closeTopUp()">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RATING MODAL -->
+    <div id="rider-rating-modal" class="modal-overlay">
+      <div class="modal-card">
+        <div class="modal-title">How was your ride?</div>
+        <div class="modal-subtitle" id="rating-driver-name">
+          Rate your driver's performance
+        </div>
+
+        <div class="star-rating" id="rider-star-rating">
+          <span data-val="1">★</span>
+          <span data-val="2">★</span>
+          <span data-val="3">★</span>
+          <span data-val="4">★</span>
+          <span data-val="5" class="active">★</span>
+        </div>
+
+        <textarea
+          id="rider-rating-comment"
+          class="rating-textarea"
+          placeholder="Share your experience (optional)..."
+        ></textarea>
+
+        <div style="display: flex; gap: 12px">
+          <button class="btn btn-primary" id="rider-submit-rating">
+            Submit Review
+          </button>
+          <button class="btn btn-outline" onclick="skipRiderRating()">
+            Skip
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- HISTORY MODAL -->
+    <div id="history-modal" class="modal-overlay">
+      <div class="modal-card wide">
+        <div class="modal-title">Ride History</div>
+        <div class="modal-subtitle">Your recent trips</div>
+
+        <div
+          style="
+            max-height: 420px;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+          "
+        >
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Route</th>
+                <th>Fare</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="history-table-body">
+              <tr>
+                <td
+                  colspan="4"
+                  style="text-align: center; padding: 20px; color: #666"
+                >
+                  Loading...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <button class="btn btn-outline" onclick="closeHistoryModal()">
+          Close
+        </button>
+      </div>
+    </div>
+
+    <!-- TOAST -->
+    <div
+      id="toast-container"
+      style="
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+      "
+    ></div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="./js/rider.js"></script>
+    <script>
+      lucide.createIcons()
+
+      // Star rating interaction
+      document.querySelectorAll('#rider-star-rating span').forEach((star) => {
+        star.onclick = (e) => {
+          const val = parseInt(e.target.getAttribute('data-val'))
+          document
+            .querySelectorAll('#rider-star-rating span')
+            .forEach((s, i) => {
+              s.classList.toggle('active', i < val)
+            })
+        }
+      })
+
+      function skipRiderRating() {
+        document.getElementById('rider-rating-modal').classList.remove('active')
+        setTimeout(() => window.location.reload(), 300)
+      }
+
+      function toggleSchedule() {
+        const c = document.getElementById('schedule-container')
+        c.style.display = c.style.display === 'none' ? 'flex' : 'none'
+      }
+
+      function cancelRide() {
+        document
+          .querySelectorAll('.panel-view')
+          .forEach((v) => v.classList.remove('active'))
+        document.getElementById('view-booking').classList.add('active')
+      }
+
+      function setTopUpAmount(val) {
+        document.getElementById('topup-amount').value = val
+      }
+
+      // Add spin animation
+      const s = document.createElement('style')
+      s.textContent = '@keyframes spin { to { transform: rotate(360deg); } }'
+      document.head.appendChild(s)
+    </script>
+  </body>
+</html>

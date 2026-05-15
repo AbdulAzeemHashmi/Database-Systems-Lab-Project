@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RideFlow | Login</title>
+    <link rel="stylesheet" href="./css/style.css" />
+    <style>
+      #error-msg { color: #ff6b6b; font-size: 13px; margin-bottom: 15px; text-align: center; display: none; }
+    </style>
+  </head>
+  <body>
+    <main class="master-container">
+      <header class="brand-header">
+        <h1 class="logo" style="margin-bottom: 5px">RideFlow</h1>
+        <p class="subtitle" id="portal-title" style="margin-bottom: 20px; color: var(--accent-color); font-weight: 500;">
+          Login
+        </p>
+      </header>
+
+      <section class="card">
+        <div id="error-msg"></div>
+
+        <form id="login-form">
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <div class="input-wrapper">
+              <input id="email" class="input" type="email" placeholder="Enter your email" required />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password</label>
+            <div class="input-wrapper">
+              <input id="password" class="input" type="password" placeholder="••••••••" required />
+            </div>
+          </div>
+
+          <!-- Hidden role field — populated by authClient.js from URL param -->
+          <input type="hidden" id="role" value="rider" />
+
+          <button type="submit" class="btn">
+            <span>Sign In</span>
+          </button>
+        </form>
+
+        <footer class="card-footer" id="register-area" style="margin-top: 1.4rem;">
+          <p>New here? <a href="#" id="dynamic-register-link">Create an account</a></p>
+        </footer>
+
+        <footer class="card-footer" style="margin-top: 10px;">
+          <p><a href="role.html" style="color: var(--text-secondary);">← Change Portal</a></p>
+        </footer>
+      </section>
+    </main>
+
+    <script src="./js/authClient.js"></script>
+  </body>
+</html>

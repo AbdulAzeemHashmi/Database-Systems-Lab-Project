@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RideFlow | Rider Registration</title>
+    <link rel="stylesheet" href="./css/style.css" />
+    <style>
+      #error-msg {
+        color: #ff6b6b;
+        font-size: 13px;
+        margin-bottom: 15px;
+        text-align: center;
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="master-container">
+      <header class="brand-header">
+        <h1 class="logo">RideFlow</h1>
+      </header>
+
+      <section class="card">
+        <div id="error-msg"></div>
+
+        <form id="rider-register-form">
+          <div class="form-group">
+            <label for="full_name">Full Name</label>
+            <div class="input-wrapper">
+              <input
+                id="full_name"
+                class="input"
+                type="text"
+                placeholder="John Doe"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <div class="input-wrapper">
+              <input
+                id="email"
+                class="input"
+                type="email"
+                placeholder="john@example.com"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="phone_number">Phone Number</label>
+            <div class="input-wrapper">
+              <input
+                id="phone_number"
+                class="input"
+                type="tel"
+                placeholder="+92 300 0000000"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password</label>
+            <div class="input-wrapper">
+              <input
+                id="password"
+                class="input"
+                type="password"
+                placeholder="••••••••"
+                required
+              />
+            </div>
+          </div>
+
+          <button type="submit" class="btn">
+            <span>Create Rider Account</span>
+          </button>
+        </form>
+
+        <footer class="card-footer">
+          <p>Already joined? <a href="login.html?role=rider">Sign In</a></p>
+        </footer>
+
+        <footer class="card-footer" style="margin-top: 10px">
+          <p>
+            <a href="role.html" style="color: var(--text-secondary)"
+              >← Change Portal</a
+            >
+          </p>
+        </footer>
+      </section>
+    </main>
+
+    <script src="./js/authClient.js"></script>
+  </body>
+</html>

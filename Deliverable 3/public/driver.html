@@ -1,0 +1,880 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RideFlow | Driver Portal</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Anta&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+      :root {
+        --accent: #d7d1b0;
+        --accent-hover: #c4be9e;
+        --glass-bg: rgba(10, 10, 10, 0.65);
+        --glass-border: rgba(255, 255, 255, 0.08);
+        --text-main: #ffffff;
+        --text-muted: #999999;
+        --text-secondary: #888888;
+        --success: #10b981;
+        --danger: #ef4444;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+      }
+
+      body {
+        height: 100vh;
+        width: 100vw;
+        background: #050505;
+        color: var(--text-main);
+        overflow: hidden;
+        position: relative;
+      }
+
+      /* MAP */
+      #map {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+      }
+
+      /* SIDEBAR */
+      .floating-sidebar {
+        position: absolute;
+        top: 24px;
+        left: 24px;
+        bottom: 24px;
+        width: 280px;
+        background: var(--glass-bg);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        border: 1px solid var(--glass-border);
+        border-radius: 30px;
+        display: flex;
+        flex-direction: column;
+        padding: 2.5rem 1.5rem;
+        z-index: 1000;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+      }
+      .brand {
+        text-align: center;
+        margin-bottom: 3rem;
+      }
+      .logo {
+        font-family: 'Anta', sans-serif;
+        font-size: 2.2rem;
+        color: var(--text-main);
+        line-height: 1;
+      }
+      .role-title {
+        font-size: 0.85rem;
+        color: var(--accent);
+        font-weight: 500;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        margin-top: 5px;
+        display: block;
+      }
+
+      /* NAV */
+      .nav-menu {
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+        flex: 1;
+      }
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 1.2rem;
+        color: var(--text-muted);
+        text-decoration: none;
+        border-radius: 16px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 1px solid transparent;
+      }
+      .nav-item i {
+        width: 22px;
+        height: 22px;
+        transition: 0.3s;
+      }
+      .nav-item:hover {
+        color: var(--text-main);
+        background: rgba(255, 255, 255, 0.04);
+      }
+      .nav-item.active {
+        background: rgba(215, 209, 176, 0.1);
+        color: var(--accent);
+        border-color: rgba(215, 209, 176, 0.2);
+        box-shadow: inset 0 0 20px rgba(215, 209, 176, 0.05);
+      }
+      .nav-item.active i {
+        color: var(--accent);
+      }
+
+      /* SIDEBAR BOTTOM */
+      .sidebar-bottom {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+      .status-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--glass-border);
+        border-radius: 16px;
+        padding: 1rem 1.2rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .status-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--text-muted);
+        transition: 0.3s;
+      }
+      .status-text {
+        color: var(--text-muted);
+        font-size: 0.95rem;
+        font-weight: 600;
+        transition: 0.3s;
+      }
+
+      /* TOGGLE SWITCH */
+      .switch {
+        position: relative;
+        display: inline-block;
+        width: 44px;
+        height: 24px;
+      }
+      .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+      .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(255, 255, 255, 0.1);
+        transition: 0.4s;
+        border-radius: 24px;
+      }
+      .slider:before {
+        position: absolute;
+        content: '';
+        height: 18px;
+        width: 18px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        transition: 0.4s;
+        border-radius: 50%;
+      }
+      input:checked + .slider {
+        background-color: var(--success);
+      }
+      input:checked + .slider:before {
+        transform: translateX(20px);
+      }
+
+      /* USER PROFILE */
+      .user-profile {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 0.5rem;
+      }
+      .user-info h4 {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-main);
+      }
+      .user-info p {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+      }
+      .logout-btn {
+        color: var(--text-muted);
+        cursor: pointer;
+        transition: 0.3s;
+      }
+      .logout-btn:hover {
+        color: var(--danger);
+      }
+
+      /* FLOATING PAGES */
+      .floating-page {
+        display: none;
+        position: absolute;
+        top: 24px;
+        left: 328px;
+        right: 24px;
+        bottom: 24px;
+        background: var(--glass-bg);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        border: 1px solid var(--glass-border);
+        border-radius: 30px;
+        padding: 4rem;
+        z-index: 500;
+        overflow-y: auto;
+        animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+      }
+      .floating-page.active {
+        display: block;
+      }
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateX(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      /* MAP OVERLAY CARD */
+      .map-overlay-card {
+        position: absolute;
+        bottom: 40px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 420px;
+        z-index: 1000;
+        padding: 2rem;
+        border: 1px solid var(--glass-border);
+        background: var(--glass-bg);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        border-radius: 24px;
+        text-align: center;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+      }
+      .hidden {
+        display: none !important;
+      }
+
+      /* BUTTONS */
+      .btn {
+        width: 100%;
+        padding: 1.1rem;
+        border-radius: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.2s;
+        border: none;
+        font-size: 1rem;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+      }
+      .btn-primary {
+        background: var(--accent);
+        color: #000;
+      }
+      .btn-primary:hover {
+        background: var(--accent-hover);
+        box-shadow: 0 8px 20px rgba(215, 209, 176, 0.2);
+      }
+      .btn-success {
+        background: var(--success);
+        color: white;
+      }
+      .btn-outline {
+        background: transparent;
+        border: 1px solid var(--glass-border);
+        color: var(--text-main);
+      }
+      .btn-outline:hover {
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      /* DATA PAGES */
+      .page-title {
+        font-family: 'Anta', sans-serif;
+        font-size: 2.5rem;
+        margin-bottom: 2.5rem;
+        color: var(--text-main);
+        letter-spacing: 1px;
+      }
+      .data-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 1.5rem;
+      }
+      .data-card {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid var(--glass-border);
+        border-radius: 20px;
+        padding: 2.5rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        transition: 0.3s;
+      }
+      .data-card:hover {
+        border-color: rgba(255, 255, 255, 0.15);
+        background: rgba(255, 255, 255, 0.04);
+      }
+      .data-card h3 {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        margin-bottom: 1rem;
+      }
+      .data-card .value {
+        font-size: 3.5rem;
+        font-weight: 700;
+        color: var(--text-main);
+        margin-bottom: 0.5rem;
+        line-height: 1;
+      }
+      .data-card .highlight {
+        color: var(--accent);
+      }
+
+      /* MODALS */
+      .modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 9000;
+        background: rgba(0, 0, 0, 0.75);
+        backdrop-filter: blur(6px);
+        align-items: center;
+        justify-content: center;
+      }
+      .modal-overlay.active {
+        display: flex;
+      }
+      .rating-card {
+        background: #0f0f0f;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 24px;
+        padding: 2.5rem;
+        width: 440px;
+        max-width: 92vw;
+        color: white;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+      }
+      .rating-card.wide {
+        max-width: 860px;
+        width: 92vw;
+      }
+      .rating-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 0.4rem;
+      }
+      .rating-subtitle {
+        color: #888;
+        font-size: 0.9rem;
+        margin-bottom: 1.2rem;
+      }
+      .star-rating {
+        display: flex;
+        gap: 8px;
+        font-size: 2.5rem;
+        margin: 1.2rem 0;
+        cursor: pointer;
+      }
+      .star-rating span {
+        color: rgba(255, 255, 255, 0.15);
+        transition: 0.2s;
+      }
+      .star-rating span.active {
+        color: #f59e0b;
+      }
+      .rating-textarea {
+        width: 100%;
+        padding: 14px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        color: white;
+        font-size: 0.9rem;
+        resize: vertical;
+        min-height: 80px;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        margin-bottom: 1.2rem;
+        outline: none;
+      }
+      .input {
+        width: 100%;
+        padding: 14px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        color: white;
+        font-size: 1rem;
+        outline: none;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+      }
+      .table-container {
+        overflow-x: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+
+    <!-- SIDEBAR -->
+    <aside class="floating-sidebar">
+      <div class="brand">
+        <h2 class="logo">RideFlow</h2>
+        <span class="role-title">Driver Portal</span>
+      </div>
+
+      <nav class="nav-menu">
+        <a class="nav-item active" onclick="switchTab('dashboard', this)">
+          <i data-lucide="map"></i> Live Map
+        </a>
+        <a class="nav-item" onclick="switchTab('earnings', this)">
+          <i data-lucide="wallet"></i> Wallet
+        </a>
+        <a class="nav-item" onclick="switchTab('ratings', this)">
+          <i data-lucide="bar-chart-2"></i> Performance
+        </a>
+        <a
+          class="nav-item"
+          onclick="
+            showHistory()
+            return false
+          "
+        >
+          <i data-lucide="clock"></i> Trip History
+        </a>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <div class="status-card">
+          <div class="status-info">
+            <div class="status-dot" id="status-dot"></div>
+            <span class="status-text" id="status-text">Offline</span>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="online-toggle" />
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="user-profile">
+          <div class="user-info">
+            <h4>Loading...</h4>
+            <p>—</p>
+          </div>
+          <a href="login.html?role=driver" class="logout-btn" title="Logout">
+            <i data-lucide="log-out"></i>
+          </a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN PAGES -->
+    <main>
+      <!-- EARNINGS / WALLET -->
+      <div id="earnings" class="floating-page">
+        <h1 class="page-title">Wallet & Earnings</h1>
+        <div class="data-grid">
+          <div class="data-card">
+            <h3>Net Wallet Balance</h3>
+            <div class="value highlight">Rs. 0</div>
+            <p style="color: var(--text-muted); font-size: 0.9rem">
+              Cleared for withdrawal.
+            </p>
+            <button
+              class="btn btn-primary"
+              style="margin-top: 2.5rem; width: max-content; padding: 14px 32px"
+            >
+              Withdraw Funds
+            </button>
+          </div>
+          <div class="data-card">
+            <h3>Lifetime Gross Earnings</h3>
+            <div class="value">Rs. 0</div>
+            <p style="color: var(--text-muted); font-size: 0.9rem">
+              Before 20% platform fee.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- PERFORMANCE / RATINGS -->
+      <div id="ratings" class="floating-page">
+        <h1 class="page-title">Driver Performance</h1>
+        <div class="data-grid">
+          <div class="data-card">
+            <h3>Overall Rating</h3>
+            <div
+              class="value highlight"
+              style="display: flex; align-items: center; gap: 12px"
+            >
+              0.0
+              <i
+                data-lucide="star"
+                style="
+                  width: 48px;
+                  height: 48px;
+                  fill: var(--accent);
+                  color: var(--accent);
+                "
+              ></i>
+            </div>
+            <p
+              style="
+                color: var(--text-muted);
+                font-size: 0.95rem;
+                margin-top: 1rem;
+              "
+            >
+              Based on rider reviews.
+            </p>
+          </div>
+          <div class="data-card">
+            <h3>Lifetime Trips</h3>
+            <div class="value">0</div>
+            <p style="color: var(--text-muted); font-size: 0.9rem">
+              Total completed rides.
+            </p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- INCOMING REQUEST OVERLAY -->
+    <div id="dashboard-overlays">
+      <div class="map-overlay-card hidden" id="incoming-request">
+        <h2
+          style="
+            color: var(--accent);
+            font-family: 'Anta', sans-serif;
+            margin-bottom: 8px;
+          "
+        >
+          New Ride Request
+        </h2>
+        <p
+          id="req-subtitle"
+          style="
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-bottom: 16px;
+          "
+        ></p>
+        <div
+          style="
+            background: rgba(255, 255, 255, 0.02);
+            padding: 24px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            border: 1px solid var(--glass-border);
+          "
+        >
+          <p
+            style="
+              color: var(--text-muted);
+              font-size: 0.95rem;
+              margin-bottom: 8px;
+              text-transform: uppercase;
+              letter-spacing: 1px;
+            "
+          >
+            Est. Distance
+          </p>
+          <p
+            style="
+              font-size: 3rem;
+              font-weight: 700;
+              color: white;
+              line-height: 1;
+            "
+          >
+            <span id="req-dist">—</span>
+            <span style="font-size: 1.2rem; color: var(--text-muted)">km</span>
+          </p>
+        </div>
+        <div style="display: flex; gap: 16px">
+          <button class="btn btn-primary" id="accept-btn" style="flex: 2">
+            Accept Ride
+          </button>
+          <button class="btn btn-outline" id="reject-btn" style="flex: 1">
+            Decline
+          </button>
+        </div>
+      </div>
+
+      <div class="map-overlay-card hidden" id="trip-panel">
+        <h2 id="trip-status" style="margin-bottom: 8px; font-weight: 600">
+          Heading to Pickup
+        </h2>
+        <p
+          id="trip-subtext"
+          style="
+            color: var(--text-muted);
+            margin-bottom: 24px;
+            font-size: 0.95rem;
+          "
+        >
+          Navigating to rider's location...
+        </p>
+        <button class="btn btn-outline hidden" id="arrive-btn">
+          Mark as Arrived
+        </button>
+        <button class="btn btn-primary hidden" id="start-trip-btn">
+          Start Trip
+        </button>
+        <button class="btn btn-success hidden" id="end-trip-btn">
+          <i
+            data-lucide="check-circle"
+            style="width: 20px; vertical-align: middle"
+          ></i>
+          Complete Trip
+        </button>
+      </div>
+    </div>
+
+    <!-- RATING MODAL (Driver rates Rider) -->
+    <div id="driver-rating-modal" class="modal-overlay">
+      <div class="rating-card">
+        <!-- Trip summary (injected by JS) -->
+        <div
+          id="trip-summary-driver"
+          class="hidden"
+          style="
+            background: rgba(16, 185, 129, 0.1);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+          "
+        >
+          <h3
+            style="
+              color: #10b981;
+              margin-bottom: 5px;
+              font-size: 0.9rem;
+              text-transform: uppercase;
+              letter-spacing: 1px;
+            "
+          >
+            Trip Completed!
+          </h3>
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+            "
+          >
+            <span id="summary-fare" style="font-size: 1.5rem; font-weight: 700"
+              >Rs. 0</span
+            >
+            <span
+              id="summary-duration"
+              style="color: var(--text-muted); font-size: 0.9rem"
+              >0 mins</span
+            >
+          </div>
+          <button class="btn btn-primary" onclick="finishDriverRide()" style="margin-top: 15px;">
+            Finish Ride
+          </button>
+        </div>
+
+        <div id="rating-elements">
+          <div class="rating-title">Rate your Rider</div>
+          <div class="rating-subtitle" id="rating-rider-name">
+            How was your experience with the rider?
+          </div>
+
+          <div class="star-rating" id="driver-star-rating">
+            <span data-val="1">★</span>
+            <span data-val="2">★</span>
+            <span data-val="3">★</span>
+            <span data-val="4">★</span>
+            <span data-val="5" class="active">★</span>
+          </div>
+
+          <textarea
+            id="driver-rating-comment"
+            class="rating-textarea"
+            placeholder="Any comments about the rider? (optional)..."
+          ></textarea>
+
+          <div style="display: flex; gap: 12px">
+            <button class="btn btn-primary" id="driver-submit-rating">
+              Submit Rating
+            </button>
+            <button class="btn btn-outline" onclick="closeDriverRating()">
+              Skip
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WITHDRAW MODAL -->
+    <div id="withdraw-modal" class="modal-overlay">
+      <div class="rating-card">
+        <div class="rating-title">Withdraw Funds</div>
+        <div class="rating-subtitle">
+          Enter the amount to withdraw to your bank account.
+        </div>
+        <div style="margin-bottom: 20px">
+          <input
+            type="number"
+            id="withdraw-amount"
+            class="input"
+            placeholder="Amount (Rs.)"
+            style="font-size: 1.2rem; text-align: center"
+          />
+        </div>
+        <div style="display: flex; gap: 12px">
+          <button class="btn btn-primary" onclick="submitWithdrawal()">
+            Confirm Withdrawal
+          </button>
+          <button class="btn btn-outline" onclick="closeWithdrawModal()">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- HISTORY MODAL -->
+    <div id="history-modal" class="modal-overlay">
+      <div class="rating-card wide">
+        <div class="rating-title">Trip History</div>
+        <div
+          class="table-container"
+          style="
+            max-height: 400px;
+            overflow-y: auto;
+            margin: 20px 0;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+          "
+        >
+          <table
+            style="width: 100%; border-collapse: collapse; text-align: left"
+          >
+            <thead>
+              <tr style="border-bottom: 1px solid var(--glass-border)">
+                <th
+                  style="
+                    padding: 12px;
+                    color: var(--text-secondary);
+                    font-size: 0.8rem;
+                  "
+                >
+                  Date
+                </th>
+                <th
+                  style="
+                    padding: 12px;
+                    color: var(--text-secondary);
+                    font-size: 0.8rem;
+                  "
+                >
+                  Route
+                </th>
+                <th
+                  style="
+                    padding: 12px;
+                    color: var(--text-secondary);
+                    font-size: 0.8rem;
+                  "
+                >
+                  Net Earning
+                </th>
+                <th
+                  style="
+                    padding: 12px;
+                    color: var(--text-secondary);
+                    font-size: 0.8rem;
+                  "
+                >
+                  Status
+                </th>
+              </tr>
+            </thead>
+            <tbody id="history-table-body">
+              <tr>
+                <td
+                  colspan="4"
+                  style="text-align: center; padding: 20px; color: #666"
+                >
+                  Loading...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <button class="btn btn-outline" onclick="closeHistoryModal()">
+          Close
+        </button>
+      </div>
+    </div>
+
+    <!-- TOAST -->
+    <div
+      id="toast-container"
+      style="
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      "
+    ></div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="./js/driver.js"></script>
+    <script>
+      lucide.createIcons()
+
+      // Star rating interaction
+      document.querySelectorAll('#driver-star-rating span').forEach((star) => {
+        star.onclick = (e) => {
+          const val = parseInt(e.target.getAttribute('data-val'))
+          document
+            .querySelectorAll('#driver-star-rating span')
+            .forEach((s, i) => {
+              s.classList.toggle('active', i < val)
+            })
+        }
+      })
+    </script>
+  </body>
+</html>

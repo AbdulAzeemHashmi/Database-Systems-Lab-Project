@@ -1,0 +1,623 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RideFlow | Admin Center</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Anta&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+      :root {
+        --bg-dark: #050505;
+        --glass-bg: rgba(15, 15, 15, 0.7);
+        --glass-border: rgba(255, 255, 255, 0.08);
+        --accent: #d7d1b0;
+        --accent-hover: #c4be9e;
+        --text-main: #ffffff;
+        --text-muted: #888888;
+        --success: #10b981;
+        --danger: #ef4444;
+        --warning: #f59e0b;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+      }
+      body {
+        height: 100vh;
+        width: 100vw;
+        background: var(--bg-dark);
+        color: var(--text-main);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      /* ---- FLOATING NAV ---- */
+      .floating-nav {
+        position: fixed;
+        top: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: var(--glass-bg);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        border: 1px solid var(--glass-border);
+        border-radius: 40px;
+        padding: 0.5rem 1.5rem;
+        width: 90%;
+        max-width: 1200px;
+        z-index: 2000;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .logo {
+        font-family: 'Anta', sans-serif;
+        font-size: 1.5rem;
+        color: var(--text-main);
+        letter-spacing: 1px;
+      }
+      .role-badge {
+        background: rgba(215, 209, 176, 0.1);
+        color: var(--accent);
+        font-size: 0.7rem;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 0.5rem;
+      }
+      .nav-item {
+        padding: 0.8rem 1.5rem;
+        color: var(--text-muted);
+        border-radius: 30px;
+        font-weight: 500;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        user-select: none;
+      }
+      .nav-item:hover {
+        color: var(--text-main);
+        background: rgba(255, 255, 255, 0.05);
+      }
+      .nav-item.active {
+        background: rgba(215, 209, 176, 0.15);
+        color: var(--accent);
+        box-shadow: 0 4px 15px rgba(215, 209, 176, 0.1);
+      }
+
+      .admin-profile {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .logout-btn {
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--text-main);
+        border: none;
+        padding: 10px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .logout-btn:hover {
+        background: rgba(239, 68, 68, 0.2);
+        color: var(--danger);
+      }
+
+      /* ---- MAIN CONTENT ---- */
+      .main-content {
+        margin-top: 100px;
+        width: 90%;
+        max-width: 1200px;
+        height: calc(100vh - 120px);
+        position: relative;
+      }
+      .page-section {
+        display: none;
+        width: 100%;
+        height: 100%;
+        animation: fadeIn 0.4s ease forwards;
+        overflow-y: auto;
+        padding-bottom: 2rem;
+      }
+      .page-section.active {
+        display: block;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      ::-webkit-scrollbar {
+        width: 0px;
+        background: transparent;
+      }
+
+      .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: 2rem;
+      }
+      .page-title {
+        font-family: 'Anta', sans-serif;
+        font-size: 2.2rem;
+        color: var(--text-main);
+      }
+
+      /* ---- METRIC CARDS ---- */
+      .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+      }
+      .metric-card {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid var(--glass-border);
+        border-radius: 20px;
+        padding: 2rem;
+        transition: 0.3s;
+      }
+      .metric-card:hover {
+        border-color: rgba(255, 255, 255, 0.15);
+        background: rgba(255, 255, 255, 0.04);
+      }
+      .metric-card h3 {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        margin-bottom: 1rem;
+      }
+      .metric-card .value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--text-main);
+      }
+      .metric-card .accent-val {
+        color: var(--accent);
+      }
+
+      /* ---- TABLE ---- */
+      .table-container {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid var(--glass-border);
+        border-radius: 20px;
+        overflow: hidden;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th {
+        background: rgba(255, 255, 255, 0.02);
+        padding: 1.2rem 1.5rem;
+        color: var(--text-muted);
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        border-bottom: 1px solid var(--glass-border);
+        text-align: left;
+        letter-spacing: 0.8px;
+      }
+      td {
+        padding: 1.2rem 1.5rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        color: var(--text-main);
+        font-size: 0.93rem;
+      }
+      tr:last-child td {
+        border-bottom: none;
+      }
+
+      /* ---- BUTTONS ---- */
+      .action-btn {
+        background: transparent;
+        border: 1px solid var(--glass-border);
+        color: var(--text-main);
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 0.8rem;
+        cursor: pointer;
+        font-weight: 500;
+        margin-right: 4px;
+        transition: 0.2s;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+      }
+      .action-btn.approve:hover {
+        background: rgba(16, 185, 129, 0.15);
+        border-color: var(--success);
+        color: var(--success);
+      }
+      .action-btn.reject:hover {
+        background: rgba(239, 68, 68, 0.15);
+        border-color: var(--danger);
+        color: var(--danger);
+      }
+
+      /* ---- STATUS PILLS ---- */
+      .status {
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 0.73rem;
+        font-weight: 600;
+        text-transform: uppercase;
+      }
+      .status.pending {
+        background: rgba(245, 158, 11, 0.1);
+        color: var(--warning);
+      }
+      .status.active {
+        background: rgba(16, 185, 129, 0.1);
+        color: var(--success);
+      }
+      .status.rejected {
+        background: rgba(239, 68, 68, 0.1);
+        color: var(--danger);
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="floating-nav">
+      <div class="brand">
+        <h2 class="logo">RideFlow</h2>
+        <span class="role-badge">Admin</span>
+      </div>
+      <div class="nav-links">
+        <div class="nav-item active" onclick="switchTab('dashboard', this)">
+          <i data-lucide="layout-dashboard" style="width: 16px"></i> Overview
+        </div>
+        <div class="nav-item" onclick="switchTab('approvals', this)">
+          <i data-lucide="shield-check" style="width: 16px"></i> Approvals
+        </div>
+        <div class="nav-item" onclick="switchTab('finance', this)">
+          <i data-lucide="banknote" style="width: 16px"></i> Finance
+        </div>
+        <div class="nav-item" onclick="switchTab('leaderboard', this)">
+          <i data-lucide="award" style="width: 16px"></i> Leaderboard
+        </div>
+        <div class="nav-item" onclick="switchTab('promos', this)">
+          <i data-lucide="tag" style="width: 16px"></i> Promos
+        </div>
+        <div class="nav-item" onclick="switchTab('fares', this)">
+          <i data-lucide="settings" style="width: 16px"></i> Fare Rules
+        </div>
+      </div>
+      <div class="admin-profile">
+        <span style="font-size: 0.9rem; color: var(--text-muted)"
+          >System Admin</span
+        >
+        <button
+          class="logout-btn"
+          onclick="window.location.href = 'loginAdmin.html'"
+          title="Logout"
+        >
+          <i data-lucide="power" style="width: 18px"></i>
+        </button>
+      </div>
+    </nav>
+
+    <main class="main-content">
+      <!-- ========== DASHBOARD ========== -->
+      <div id="dashboard" class="page-section active">
+        <div class="section-header">
+          <h1 class="page-title">Platform Overview</h1>
+        </div>
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <h3>Total Revenue</h3>
+            <div class="value accent-val" id="stat-revenue">Rs. 0</div>
+          </div>
+          <div class="metric-card">
+            <h3>Active Rides</h3>
+            <div class="value" id="stat-rides">0</div>
+          </div>
+          <div class="metric-card">
+            <h3>Total Users</h3>
+            <div class="value" id="stat-users">0</div>
+          </div>
+        </div>
+
+        <h3
+          style="
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+            font-weight: 500;
+          "
+        >
+          Recent System Alerts
+        </h3>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Timestamp</th>
+                <th>Alert Message</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="alerts-table">
+              <tr>
+                <td
+                  colspan="3"
+                  style="text-align: center; color: var(--text-muted)"
+                >
+                  Loading alerts...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ========== APPROVALS ========== -->
+      <div id="approvals" class="page-section">
+        <div class="section-header">
+          <h1 class="page-title">Pending Verifications</h1>
+          <button
+            class="action-btn approve"
+            onclick="fetchPendingApprovals()"
+            style="padding: 10px 20px"
+          >
+            <i
+              data-lucide="refresh-cw"
+              style="width: 14px; vertical-align: middle; margin-right: 4px"
+            ></i>
+            Refresh
+          </button>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Driver</th>
+                <th>Licence No.</th>
+                <th>Vehicle Details</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="approvals-table">
+              <tr>
+                <td
+                  colspan="5"
+                  style="text-align: center; color: var(--text-muted)"
+                >
+                  Loading...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ========== FINANCE ========== -->
+      <div id="finance" class="page-section">
+        <div class="section-header">
+          <h1 class="page-title">Payout Requests</h1>
+          <button
+            class="action-btn approve"
+            onclick="fetchPayoutRequests()"
+            style="padding: 10px 20px"
+          >
+            <i
+              data-lucide="refresh-cw"
+              style="width: 14px; vertical-align: middle; margin-right: 4px"
+            ></i>
+            Refresh
+          </button>
+        </div>
+        <div class="metrics-grid" style="grid-template-columns: 1fr 1fr">
+          <div class="metric-card">
+            <h3>Pending Payouts Total</h3>
+            <div class="value" id="stat-pending-payouts">Rs. 0</div>
+          </div>
+          <div class="metric-card">
+            <h3>Platform Commission Collected</h3>
+            <div class="value accent-val" id="stat-commissions">Rs. 0</div>
+          </div>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Driver</th>
+                <th>Amount Requested</th>
+                <th>Requested At</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="payouts-table">
+              <tr>
+                <td
+                  colspan="5"
+                  style="text-align: center; color: var(--text-muted)"
+                >
+                  Loading...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ========== LEADERBOARD ========== -->
+      <div id="leaderboard" class="page-section">
+        <div class="section-header">
+          <div>
+            <h1 class="page-title">Driver Leaderboard</h1>
+            <p style="color: var(--text-muted); margin-top: 0.5rem; font-size: 0.95rem; max-width: 680px;">
+              Live view of top-rated verified drivers by city. Ratings are updated automatically as new reviews come in.
+            </p>
+          </div>
+          <button
+            class="action-btn approve"
+            onclick="fetchLeaderboard()"
+            style="padding: 10px 20px"
+          >
+            <i
+              data-lucide="refresh-cw"
+              style="width: 14px; vertical-align: middle; margin-right: 4px"
+            ></i>
+            Refresh
+          </button>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>City</th>
+                <th>Driver</th>
+                <th>Rating</th>
+                <th>Total Trips</th>
+              </tr>
+            </thead>
+            <tbody id="leaderboard-table">
+              <tr>
+                <td colspan="4" style="text-align: center; color: var(--text-muted)">
+                  Loading leaderboard...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ========== PROMOS ========== -->
+      <div id="promos" class="page-section">
+        <div class="section-header">
+          <h1 class="page-title">Promo Codes</h1>
+          <button
+            class="action-btn approve"
+            onclick="openPromoModal()"
+            style="padding: 10px 20px"
+          >
+            + Create New Promo
+          </button>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Code</th>
+                <th>Discount</th>
+                <th>Usage</th>
+                <th>Expiry</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="promos-table-body">
+              <tr>
+                <td
+                  colspan="5"
+                  style="text-align: center; color: var(--text-muted)"
+                >
+                  Loading...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ========== FARE RULES ========== -->
+      <div id="fares" class="page-section">
+        <div class="section-header">
+          <h1 class="page-title">Fare Rules</h1>
+          <button
+            class="action-btn approve"
+            onclick="openAddFareModal()"
+            style="padding: 10px 20px"
+          >
+            + Add Rule
+          </button>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>City</th>
+                <th>Vehicle Type</th>
+                <th>Base Rate</th>
+                <th>Per KM</th>
+                <th>Per Minute</th>
+                <th>Surge ×</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="fares-table-body">
+              <tr>
+                <td
+                  colspan="7"
+                  style="text-align: center; color: var(--text-muted)"
+                >
+                  Loading...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+
+    <!-- Toast container -->
+    <div
+      id="toast-container"
+      style="
+        position: fixed;
+        top: 24px;
+        right: 24px;
+        z-index: 99999;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      "
+    ></div>
+
+    <script src="./js/admin.js"></script>
+    <script>
+      lucide.createIcons()
+
+      function switchTab(tabId, element) {
+        document
+          .querySelectorAll('.nav-item')
+          .forEach((el) => el.classList.remove('active'))
+        element.classList.add('active')
+        document
+          .querySelectorAll('.page-section')
+          .forEach((el) => el.classList.remove('active'))
+        document.getElementById(tabId).classList.add('active')
+      }
+    </script>
+  </body>
+</html>

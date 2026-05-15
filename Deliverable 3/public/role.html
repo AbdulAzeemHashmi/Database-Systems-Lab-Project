@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RideFlow | Select Role</title>
+    <link rel="stylesheet" href="./css/style.css" />
+    <script src="https://unpkg.com/lucide@latest"></script>
+  </head>
+  <body>
+    <main class="master-container">
+      <header class="brand-header">
+        <h1 class="logo">RideFlow</h1>
+        <p class="subtitle" style="margin-bottom: 10px">
+          Select your portal to continue
+        </p>
+      </header>
+
+      <div class="role-grid">
+        <a href="index.html?role=rider" class="role-card">
+          <div class="icon-circle"><i data-lucide="user"></i></div>
+          <div class="role-info"><h3>Rider</h3></div>
+          <i data-lucide="chevron-right" style="margin-left: auto; opacity: 0.5"></i>
+        </a>
+
+        <a href="index.html?role=driver" class="role-card">
+          <div class="icon-circle"><i data-lucide="car"></i></div>
+          <div class="role-info"><h3>Driver</h3></div>
+          <i data-lucide="chevron-right" style="margin-left: auto; opacity: 0.5"></i>
+        </a>
+
+        <a href="loginAdmin.html" class="role-card">
+          <div class="icon-circle"><i data-lucide="shield"></i></div>
+          <div class="role-info"><h3>Admin</h3></div>
+          <i data-lucide="chevron-right" style="margin-left: auto; opacity: 0.5"></i>
+        </a>
+      </div>
+    </main>
+
+    <script>lucide.createIcons();</script>
+  </body>
+</html>
