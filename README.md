@@ -168,21 +168,3 @@ Or place the project folder inside your local server's `htdocs` / `www` director
 > File names may differ. Check the contents of each deliverable folder for exact filenames.
 
 ---
-
-## 👥 Contributors
-
-This project was developed as a collaborative team effort for the **Database Systems Lab** course.
-
-| Name | GitHub Profile |
-|---|---|
-| Abdul Azeem | [@AbdulAzeemHashmi](https://github.com/AbdulAzeemHashmi) |
-| Diya Hurmat |  |
-| M. Umair Ahmed |  |
-
----
-
-<div align="center">
-
-<sub>Submitted as part of the Database Systems Lab course &nbsp;|&nbsp; Rawalpindi, Pakistan</sub>
-
-</div>
