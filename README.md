@@ -165,6 +165,5 @@ open "Deliverable 3/index.html"
 
 Or place the project folder inside your local server's `htdocs` / `www` directory and access it via `http://localhost/Database-Systems-Lab-Project/`.
 
-> File names may differ. Check the contents of each deliverable folder for exact filenames.
 
 ---
