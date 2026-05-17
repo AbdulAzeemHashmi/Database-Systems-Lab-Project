@@ -55,7 +55,7 @@ Database-Systems-Lab-Project/
 
 ---
 
-## 📦 Deliverable 1 -- Requirements and Conceptual Design
+## 📦 Deliverable 1 - Requirements and Conceptual Design
 
 This phase focuses on understanding the problem domain and producing a conceptual model.
 
@@ -69,7 +69,7 @@ This phase focuses on understanding the problem domain and producing a conceptua
 
 ---
 
-## 📦 Deliverable 2 -- Logical Design and Schema
+## 📦 Deliverable 2 - Logical Design and Schema
 
 This phase translates the conceptual ER model into a concrete relational schema.
 
@@ -82,7 +82,7 @@ This phase translates the conceptual ER model into a concrete relational schema.
 
 ---
 
-## 📦 Deliverable 3 -- Implementation and Final Report
+## 📦 Deliverable 3 - Implementation and Final Report
 
 This phase covers the complete implementation including the web frontend and database backend.
 
