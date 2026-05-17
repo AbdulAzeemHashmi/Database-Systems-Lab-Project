@@ -20,9 +20,9 @@
 
 - [Overview](#overview)
 - [Repository Structure](#repository-structure)
-- [Deliverable 1 -- Requirements and Conceptual Design](#deliverable-1----requirements-and-conceptual-design)
-- [Deliverable 2 -- Logical Design and Schema](#deliverable-2----logical-design-and-schema)
-- [Deliverable 3 -- Implementation and Final Report](#deliverable-3----implementation-and-final-report)
+- [Deliverable 1 - Requirements and Conceptual Design](#deliverable-1----requirements-and-conceptual-design)
+- [Deliverable 2 - Logical Design and Schema](#deliverable-2----logical-design-and-schema)
+- [Deliverable 3 - Implementation and Final Report](#deliverable-3----implementation-and-final-report)
 - [Core Concepts Applied](#core-concepts-applied)
 - [Tech Stack](#tech-stack)
 - [Getting Started](#getting-started)
