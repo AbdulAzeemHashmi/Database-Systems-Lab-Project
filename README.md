@@ -165,5 +165,24 @@ open "Deliverable 3/index.html"
 
 Or place the project folder inside your local server's `htdocs` / `www` directory and access it via `http://localhost/Database-Systems-Lab-Project/`.
 
+---
+
+## 👥 Contributors
+
+This project was collaboratively developed by the following team members:
+
+<div align="center">
+
+| Name | Email |
+|---|---|
+| M. Umair Ahmed | [i242545@isb.nu.edu.pk](mailto:i242545@isb.nu.edu.pk) |
+| Diya Hurmat | [i240094@isb.nu.edu.pk](mailto:i240094@isb.nu.edu.pk) |
+| Abdul Azeem | [i242013@isb.nu.edu.pk](mailto:i242013@isb.nu.edu.pk) |
+
+</div>
 
 ---
+
+<div align="center">
+  <p>Made with ❤️ for Database Systems Lab &nbsp;|&nbsp; FAST-NUCES Islamabad</p>
+</div>
