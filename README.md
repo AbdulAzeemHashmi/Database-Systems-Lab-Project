@@ -1,6 +1,6 @@
 <div align="center">
 
-<h1>🗄️ Database Systems Lab Project</h1>
+<h1>🗄️ Database Systems Lab Project</h1> 
 
 <p>A complete, multi-phase academic project covering the full lifecycle of relational database design and implementation, from conceptual modeling to a fully functional web-based application.</p>
 
