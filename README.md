@@ -181,7 +181,7 @@ This project was collaboratively developed by the following team members:
 
 </div>
 
----
+---   
 
 <div align="center">
   <p>Made with ❤️ for Database Systems Lab &nbsp;|&nbsp; FAST-NUCES Islamabad</p>
