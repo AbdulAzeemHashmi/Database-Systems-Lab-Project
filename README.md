@@ -32,7 +32,7 @@
 
 ## 📌 Overview
 
-This repository contains all project work submitted for the **Database Systems Lab** course. The project is organized into three progressive deliverables, each building on the previous phase.    
+This repository contains all project work submitted for the **Database Systems Lab** course. The project is organized into three progressive deliverables, each building on the previous phase.       
 
 The project covers:
 
